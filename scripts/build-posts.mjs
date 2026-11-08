@@ -85,7 +85,7 @@ function lim(where, label, v, max, soft) {
 
 // 日本語の文の途中に、英単語がそのまま紛れ込んでいないか調べる。
 // （書いている途中で英語が混ざる取り違えが実際に起きたので、機械で止める）
-const ALLOW_EN = /^(TOEIC|NISA|iDeCo|DI|GDP|CBT|ETF|REIT|PER|PBR|ROE|DCF|NPV|IRR|NOI|ABL|PL|DB|DC|MBS|TTS|TTB|TTM|IT|AI|CPU|OS|URL|HTTP|HTTPS|TCP|IP|DNS|SQL|API|RAM|ROM|USB|LAN|WAN|VPN|SSL|TLS|CSS|HTML|JSON|XML|UI|UX|QR|AR|VR|IoT|DX|RPA|BI|ERP|CRM|SFA|SLA|SNS|FAQ|PDF|CSV|ZIP|JPEG|PNG|GIF|MP3|MP4|DVD|SSD|HDD|GPU|NPU|LED|GPS|RFID|NFC|BLE|SIM|eSIM|ESG|SDGs|GX|CO2|TOPIX|MMF|ZEH|Tax|Buy|Sell|Mag|ZEB|LCCM)$/i;
+const ALLOW_EN = /^(TOEIC|NISA|iDeCo|DI|GDP|CBT|ETF|REIT|PER|PBR|ROE|DCF|NPV|IRR|NOI|ABL|PL|DB|DC|MBS|TTS|TTB|TTM|IT|AI|CPU|OS|URL|HTTP|HTTPS|TCP|IP|DNS|SQL|API|RAM|ROM|USB|LAN|WAN|VPN|SSL|TLS|CSS|HTML|JSON|XML|UI|UX|QR|AR|VR|IoT|DX|RPA|BI|ERP|CRM|SFA|SLA|SNS|FAQ|PDF|CSV|ZIP|JPEG|PNG|GIF|MP3|MP4|DVD|SSD|HDD|GPU|NPU|LED|GPS|RFID|NFC|BLE|SIM|eSIM|ESG|SDGs|GX|CO2|TOPIX|MMF|ZEH|Tax|Buy|Sell|Mag|ZEB|LCCM|xxx|yyy|nnn|next|null|true|false|mod|and|not|log|while|for|endif|endwhile|endfor|return|push|pop|ping|exists|union|all|from|where|group|having|order|select|insert|update|delete|grant|revoke|commit|rollback|like|between|null|distinct|count|sum|avg|max|min|asc|desc|else|elseif|fact|gcd|part|is|ping|trap|name|key|type|text|back|note|item|tag|term|list|map|set|get|put|cut|run|new|old|end|top|bit|byte|word|char|int|bool|var|num|str|arr|obj|fun|sub|val|idx|len|min|max|sum|avg|mid|low|high)$/i;
 function checkEnglish(where, a) {
   const s = JSON.stringify(a);
   const JP = /[ぁ-んァ-ヶ一-龠]/;
