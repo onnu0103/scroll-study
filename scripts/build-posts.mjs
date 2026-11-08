@@ -88,11 +88,19 @@ function lim(where, label, v, max, soft) {
 const ALLOW_EN = /^(TOEIC|NISA|iDeCo|DI|GDP|CBT|ETF|REIT|PER|PBR|ROE|DCF|NPV|IRR|NOI|ABL|PL|DB|DC|MBS|TTS|TTB|TTM|IT|AI|CPU|OS|URL|HTTP|HTTPS|TCP|IP|DNS|SQL|API|RAM|ROM|USB|LAN|WAN|VPN|SSL|TLS|CSS|HTML|JSON|XML|UI|UX|QR|AR|VR|IoT|DX|RPA|BI|ERP|CRM|SFA|SLA|SNS|FAQ|PDF|CSV|ZIP|JPEG|PNG|GIF|MP3|MP4|DVD|SSD|HDD|GPU|NPU|LED|GPS|RFID|NFC|BLE|SIM|eSIM|ESG|SDGs|GX|CO2|TOPIX|MMF|ZEH|Tax|Buy|Sell|Mag|ZEB|LCCM)$/i;
 function checkEnglish(where, a) {
   const s = JSON.stringify(a);
-  const hits = s.match(/[ぁ-んァ-ヶ一-龠][A-Za-z]{3,}|[A-Za-z]{3,}[ぁ-んァ-ヶ一-龠]/g);
-  if (!hits) return;
-  for (const h of hits) {
-    const word = h.replace(/[ぁ-んァ-ヶ一-龠]/g, '');
+  const JP = /[ぁ-んァ-ヶ一-龠]/;
+  const re = /[A-Za-z]+/g;
+  let m;
+  while ((m = re.exec(s)) !== null) {
+    const word = m[0];
+    if (word.length < 3) continue;
+    // 大文字を含む語（CSR・GDPR・Unicode・Python など）は、略語か固有名詞なので許す。
+    // 書き間違いで紛れ込むのは、month・north のような全部小文字の語がほとんど。
+    if (!/^[a-z]+$/.test(word)) continue;
     if (ALLOW_EN.test(word)) continue;
+    const before = s[m.index - 1] || '';
+    const after = s[m.index + word.length] || '';
+    if (!JP.test(before) && !JP.test(after)) continue;   // 日本語に隣接していなければ見逃す
     warn(where, `日本語の中に英単語「${word}」が混ざっています（書き間違いでないか確認）`);
   }
 }

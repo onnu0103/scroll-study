@@ -4,6 +4,7 @@
 const LOADERS = {
   boki: () => require('./boki').default,
   fp2: () => require('./fp2').default,
+  ipass: () => require('./ipass').default,
   takken: () => require('./takken').default,
 };
 
