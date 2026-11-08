@@ -2,6 +2,7 @@
 //
 // 分野ごとに1ファイル。選んだ分野の分だけ読み込む（起動を軽くするため）。
 const LOADERS = {
+  boki: () => require('./boki').default,
   fp2: () => require('./fp2').default,
   takken: () => require('./takken').default,
 };
