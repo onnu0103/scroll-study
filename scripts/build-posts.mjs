@@ -83,9 +83,24 @@ function lim(where, label, v, max, soft) {
 
 /* ---------- 1つのポストを調べる ---------- */
 
+// 日本語の文の途中に、英単語がそのまま紛れ込んでいないか調べる。
+// （書いている途中で英語が混ざる取り違えが実際に起きたので、機械で止める）
+const ALLOW_EN = /^(TOEIC|NISA|iDeCo|DI|GDP|CBT|ETF|REIT|PER|PBR|ROE|DCF|NPV|IRR|NOI|ABL|PL|DB|DC|MBS|TTS|TTB|TTM|IT|AI|CPU|OS|URL|HTTP|HTTPS|TCP|IP|DNS|SQL|API|RAM|ROM|USB|LAN|WAN|VPN|SSL|TLS|CSS|HTML|JSON|XML|UI|UX|QR|AR|VR|IoT|DX|RPA|BI|ERP|CRM|SFA|SLA|SNS|FAQ|PDF|CSV|ZIP|JPEG|PNG|GIF|MP3|MP4|DVD|SSD|HDD|GPU|NPU|LED|GPS|RFID|NFC|BLE|SIM|eSIM|ESG|SDGs|GX|CO2)$/i;
+function checkEnglish(where, a) {
+  const s = JSON.stringify(a);
+  const hits = s.match(/[ぁ-んァ-ヶ一-龠][A-Za-z]{3,}|[A-Za-z]{3,}[ぁ-んァ-ヶ一-龠]/g);
+  if (!hits) return;
+  for (const h of hits) {
+    const word = h.replace(/[ぁ-んァ-ヶ一-龠]/g, '');
+    if (ALLOW_EN.test(word)) continue;
+    warn(where, `日本語の中に英単語「${word}」が混ざっています（書き間違いでないか確認）`);
+  }
+}
+
 function checkPost(fieldId, idx, a) {
   const where = `${fieldId}[${idx}]`;
   if (!Array.isArray(a)) { err(where, '配列ではありません'); return null; }
+  checkEnglish(where, a);
 
   const type = TYPES[a[0]];
   if (!type) { err(where, `種類 "${a[0]}" が t/q/c/m/d のどれでもありません`); return null; }
