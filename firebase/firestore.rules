@@ -1,0 +1,41 @@
+rules_version = '2';
+
+// スクロール学習（ScrollStudy）のFirestoreルール
+//
+// 使い方：Firebaseの画面「Firestore Database」→「ルール」に、このファイルの中身を
+//         そのまま貼って「公開」する。
+//
+// 考え方：このアプリに「みんなで見るデータ」は一つもない。
+//         保存するのは、その人自身の学習記録（設定・用語集・いいね・ブックマーク・
+//         自分のポスト）だけで、本人以外は読み書きできない。
+//         アプリ本体は data/users/{自分のID}/{書類名} に書き込む。
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isMe(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // 明らかにおかしいデータを受け付けない（1件あたりの大きさを抑える）
+    function okDoc(d) {
+      return d.keys().size() <= 20
+        && d.kind is string
+        && d.kind.size() <= 10
+        && (!('json' in d) || (d.json is string && d.json.size() <= 8000))
+        && (!('updatedAt' in d) || d.updatedAt is number)
+        && (!('at' in d) || d.at is number);
+    }
+
+    // 本人の学習記録だけ。読むのも書くのも本人に限る（運営者も読めない）。
+    match /data/users/{uid}/{docId} {
+      allow read: if isMe(uid);
+      allow create, update: if isMe(uid) && okDoc(request.resource.data);
+      allow delete: if isMe(uid);
+    }
+
+    // 上で許可した場所以外は、すべて読み書きできない。
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

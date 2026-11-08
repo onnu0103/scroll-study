@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "ScrollStudy",
+    "slug": "scroll-study",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#ffffff",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.onnu0103.scrollstudy",
+      "infoPlist": {
+        "CFBundleDisplayName": "スクロール学習",
+        "CFBundleDevelopmentRegion": "ja",
+        "CFBundleLocalizations": [
+          "ja"
+        ],
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "enableRemoteNotifications": false
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 160,
+          "resizeMode": "contain",
+          "backgroundColor": "#4f46e5"
+        }
+      ]
+    ]
+  }
+}
