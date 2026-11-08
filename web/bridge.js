@@ -121,6 +121,18 @@
   var SOLVE = { tip: 1, myth: 1, dialog: 1 };   // 解説系
   var CHECK = { quiz: 1, card: 1 };             // 確認系
 
+  // 同じ細目の中から毎回いちばん前のものばかり選ぶと、
+  // 種類が偏る（4択ばかり出て一問一答が出てこない）。
+  // 読み込むたびに1つずつずらして選び、種類が行きわたるようにする。
+  var ROT_KEY = 'scrollstudy.rotate.v1';
+  var rot = Number(store(ROT_KEY)) || 0;
+  function bumpRot() { rot = (rot + 1) % 1000000; store(ROT_KEY, rot); }
+  function take(arr, n) {
+    if (!arr.length) return null;
+    var i = ((n % arr.length) + arr.length) % arr.length;
+    return arr.splice(i, 1)[0];
+  }
+
   function expand(a) {
     if (!a || !a.length) return null;
     var type = TYPE[a[0]];
@@ -227,7 +239,7 @@
           for (var c = 0; c < e.c; c++) {
             var src = (c % 2 === 0) ? solve : check;
             var alt = (c % 2 === 0) ? check : solve;
-            var o3 = src.shift() || alt.shift();
+            var o3 = take(src, rot + c) || take(alt, rot + c);
             if (!o3) break;
             used[mark(o3)] = 1;
             var copy = {};
@@ -236,6 +248,8 @@
             chosen.push(copy);
           }
         });
+
+        bumpRot();
 
         // 1件ずつ、少し間をおいて流す（アプリ本体は届いた順に表示する）
         var idx = 0;
