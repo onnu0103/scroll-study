@@ -1,8 +1,8 @@
 {
-  "apiKey": "",
-  "authDomain": "",
-  "projectId": "",
-  "storageBucket": "",
-  "messagingSenderId": "",
-  "appId": ""
+  "apiKey": "AIzaSyAXINRhxF_TNF3p8MO6ZCnnLE-z4z3nR-A",
+  "authDomain": "scroll-study.firebaseapp.com",
+  "projectId": "scroll-study",
+  "storageBucket": "scroll-study.firebasestorage.app",
+  "messagingSenderId": "724869755824",
+  "appId": "1:724869755824:web:5fe134b1de3310f9ec1c75"
 }
