@@ -42,3 +42,6 @@ yarn-error.*
 /test-results/
 /playwright-report/
 /.playwright/
+
+# 確認用に撮った画面（公開ページに置かない）
+/docs/shots/

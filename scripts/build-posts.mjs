@@ -73,10 +73,14 @@ const ACCTS = { s: 1, b: 1, n: 1 };
 const SPEAKERS = { s: 1, o: 1 };
 
 const S = (v) => (typeof v === 'string' ? v : null);
+// いま調べている分野。** の扱いを分野ごとに変えるために使う。
+let CUR_FIELD = null;
 function lim(where, label, v, max, soft) {
   const s = S(v);
   if (s == null) { err(where, `${label} が文字列ではありません`); return; }
   if (!s.trim()) { err(where, `${label} が空です`); return; }
+  // Python の ** はべき乗演算子で、記号のまま表示されるのが正しいので調べない。
+  if (CUR_FIELD !== 'python' && s.includes("**")) err(where, `${label} に ** が含まれています（アプリ側で太字にならず、記号のまま表示されます）`);
   if (s.length > max) err(where, `${label} が ${s.length} 文字です（上限 ${max} 文字。超えるとアプリ側で切られます）`);
   else if (soft && s.length > soft) warn(where, `${label} が ${s.length} 文字です（読みやすさの目安は ${soft} 文字）`);
 }
@@ -85,7 +89,7 @@ function lim(where, label, v, max, soft) {
 
 // 日本語の文の途中に、英単語がそのまま紛れ込んでいないか調べる。
 // （書いている途中で英語が混ざる取り違えが実際に起きたので、機械で止める）
-const ALLOW_EN = /^(TOEIC|NISA|iDeCo|DI|GDP|CBT|ETF|REIT|PER|PBR|ROE|DCF|NPV|IRR|NOI|ABL|PL|DB|DC|MBS|TTS|TTB|TTM|IT|AI|CPU|OS|URL|HTTP|HTTPS|TCP|IP|DNS|SQL|API|RAM|ROM|USB|LAN|WAN|VPN|SSL|TLS|CSS|HTML|JSON|XML|UI|UX|QR|AR|VR|IoT|DX|RPA|BI|ERP|CRM|SFA|SLA|SNS|FAQ|PDF|CSV|ZIP|JPEG|PNG|GIF|MP3|MP4|DVD|SSD|HDD|GPU|NPU|LED|GPS|RFID|NFC|BLE|SIM|eSIM|ESG|SDGs|GX|CO2|TOPIX|MMF|ZEH|Tax|Buy|Sell|Mag|ZEB|LCCM|xxx|yyy|nnn|next|null|true|false|mod|and|not|log|while|for|endif|endwhile|endfor|return|push|pop|ping|exists|union|all|from|where|group|having|order|select|insert|update|delete|grant|revoke|commit|rollback|like|between|null|distinct|count|sum|avg|max|min|asc|desc|else|elseif|fact|gcd|part|is|ping|trap|name|key|type|text|back|note|item|tag|term|list|map|set|get|put|cut|run|new|old|end|top|bit|byte|word|char|int|bool|var|num|str|arr|obj|fun|sub|val|idx|len|min|max|sum|avg|mid|low|high)$/i;
+const ALLOW_EN = /^(TOEIC|NISA|iDeCo|DI|GDP|CBT|ETF|REIT|PER|PBR|ROE|DCF|NPV|IRR|NOI|ABL|PL|DB|DC|MBS|TTS|TTB|TTM|IT|AI|CPU|OS|URL|HTTP|HTTPS|TCP|IP|DNS|SQL|API|RAM|ROM|USB|LAN|WAN|VPN|SSL|TLS|CSS|HTML|JSON|XML|UI|UX|QR|AR|VR|IoT|DX|RPA|BI|ERP|CRM|SFA|SLA|SNS|FAQ|PDF|CSV|ZIP|JPEG|PNG|GIF|MP3|MP4|DVD|SSD|HDD|GPU|NPU|LED|GPS|RFID|NFC|BLE|SIM|eSIM|ESG|SDGs|GX|CO2|TOPIX|MMF|ZEH|Tax|Buy|Sell|Mag|ZEB|LCCM|xxx|yyy|nnn|next|null|true|false|mod|and|not|log|while|for|endif|endwhile|endfor|return|push|pop|ping|exists|union|all|from|where|group|having|order|select|insert|update|delete|grant|revoke|commit|rollback|like|between|null|distinct|count|sum|avg|max|min|asc|desc|else|elseif|fact|gcd|part|is|ping|trap|name|key|type|text|back|note|item|tag|term|list|map|set|get|put|cut|run|new|old|end|top|bit|byte|word|char|int|bool|var|num|str|arr|obj|fun|sub|val|idx|len|min|max|sum|avg|mid|low|high|recently|frequently|traceroute|hop|cost)$/i;
 function checkEnglish(where, a) {
   const s = JSON.stringify(a);
   const JP = /[ぁ-んァ-ヶ一-龠]/;
@@ -105,10 +109,14 @@ function checkEnglish(where, a) {
   }
 }
 
+// 英語そのものを教える分野では、英文が入るのが当たり前なので、このチェックはしない。
+const ENGLISH_FIELDS = new Set(['toeic', 'eiken']);
+
 function checkPost(fieldId, idx, a) {
   const where = `${fieldId}[${idx}]`;
   if (!Array.isArray(a)) { err(where, '配列ではありません'); return null; }
-  checkEnglish(where, a);
+  CUR_FIELD = fieldId;
+  if (!ENGLISH_FIELDS.has(fieldId)) checkEnglish(where, a);
 
   const type = TYPES[a[0]];
   if (!type) { err(where, `種類 "${a[0]}" が t/q/c/m/d のどれでもありません`); return null; }
