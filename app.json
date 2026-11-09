@@ -2,6 +2,7 @@
   "expo": {
     "name": "ScrollStudy",
     "slug": "scroll-study",
+    "owner": "onnu0104",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -35,6 +36,11 @@
           "backgroundColor": "#4f46e5"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "0b26c581-bdc6-448a-a30c-577c76554250"
+      }
+    }
   }
 }
